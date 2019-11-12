@@ -35,7 +35,8 @@ public class SearchBird extends AppCompatActivity implements View.OnClickListene
         int zip = Integer.parseInt(EnterZipCode.getText().toString());
 
         if (view == Search) {
-
+//Shit
+            int ok;
 
         }
         else(view == Report) {
