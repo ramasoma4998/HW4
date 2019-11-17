@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -19,8 +20,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference("Birds");
-
- //    myRef.setValue("Hello, World!");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +38,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        String bird = BirdName.getText().toString();
-        int zip = Integer.parseInt(ZipCode.getText().toString());
-        String name = PersonName.getText().toString();
-
         if (view == Submit) {
+            String bird = BirdName.getText().toString();
+            int zip = Integer.parseInt(ZipCode.getText().toString());
+            String name = PersonName.getText().toString();
             Bird temp = new Bird(bird,zip,name);
             myRef.push().setValue(temp);
+            Toast.makeText(this, "Bird added to database", Toast.LENGTH_SHORT).show();
+
         }
         else if (view == Search) {
             Intent search = new Intent(MainActivity.this, SearchBird.class);

@@ -1,5 +1,7 @@
 package com.example.hw4;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -9,6 +11,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class SearchBird extends AppCompatActivity implements View.OnClickListener{
 
     EditText EnterZipCode;
@@ -16,6 +24,9 @@ public class SearchBird extends AppCompatActivity implements View.OnClickListene
     TextView SearchedPerson;
     Button Search;
     Button Report;
+
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef = database.getReference("Birds");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,19 +38,54 @@ public class SearchBird extends AppCompatActivity implements View.OnClickListene
         BirdName = findViewById(R.id.SearchedBird);
         SearchedPerson = findViewById(R.id.SearchedPerson);
         Report = findViewById(R.id.Report);
+
+        Search.setOnClickListener(this);
+        Report.setOnClickListener(this);
     }
 
 
     @Override
     public void onClick(View view) {
-        int zip = Integer.parseInt(EnterZipCode.getText().toString());
-
         if (view == Search) {
-//Shit
-            int ok;
+
+            int zipcode = Integer.parseInt(EnterZipCode.getText().toString());
+            myRef.orderByChild("zipcode").equalTo(zipcode).addChildEventListener(new ChildEventListener() {
+
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    Bird FromDatabase = dataSnapshot.getValue(Bird.class);
+
+                    String DataName = FromDatabase.birdname;
+                    String DataPerson = FromDatabase.personname;
+
+                    BirdName.setText(DataName);
+                    SearchedPerson.setText(DataPerson);
+
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
 
         }
-        else(view == Report) {
+        else if (view == Report) {
             Intent search = new Intent(SearchBird.this, MainActivity.class);
             startActivity(search);
         }
